@@ -16,8 +16,11 @@
     "zzoffduty"
   ],
   "scripts": {
+    "init": "npm run sync",
     "sync": "node ./build/syncLocal.js",
-    "release": "node ./build/beforeGitPush.js && npm publish"
+    "release:patch": "node ./build/beforeGitPush.js && npm version patch && npm publish",
+    "release:minor": "node ./build/beforeGitPush.js && npm version minor && npm publish",
+    "release:major": "node ./build/beforeGitPush.js && npm version major && npm publish"
   },
   "engines": {
     "node": ">=14.0.0"
