@@ -9,6 +9,10 @@
     "mechine": "src/index.js",
     "zz": "src/index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zzdaddy/zzoffduty-cli.git"
+  },
   "keywords": [
     "cli",
     "zz",
