@@ -1,7 +1,7 @@
 {
   "name": "zzoffduty-cli",
   "version": "0.1.7",
-  "description": "batch translate i18n files",
+  "description": "work tool fun",
   "main": "src/index.js",
   "type": "module",
   "author": "Gank",
