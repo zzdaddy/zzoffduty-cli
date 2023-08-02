@@ -26,6 +26,79 @@ zz set translate account.key xxx
 4. 生成appId和key
 5. 本插件目前仅支持高级版
 
+## 翻译单个文件
+
+```shell
+zz translate -f ./yourfile.js
+# 会在同级目录下生成 yourfile-en.js
+```
+如test.js
+```js
+export default {
+    isok: '早早下班',
+    common: {
+        listTitle: '标题',
+        addTitle: '测试'
+    },
+    test: {
+        a: {
+            b: {
+                c: '哈哈哈'
+            }
+        },
+        aaa: {
+            value: '输入'
+        }
+    }
+}
+```
+输出文件为test-en.js, 内容如下
+```js
+export default {
+    isok: "Leave work early",
+    common: {
+        listTitle: "title",
+        addTitle: "test"
+    },
+    test: {
+        a: {
+            b: {
+                c: "Hahaha"
+            }
+        },
+        aaa: {
+            value: "input"
+        }
+    }
+}
+```
+## 批量翻译
+
+> 检索目标文件夹内所有langs文件夹下的zh-CN 文件夹下的所有文件, 输出至其同级的en-US下, 文件名同名
+
+```shell
+zz translate -d ./demo
+```
+如: demo文件夹是以下结构, zh-CN中所有JS会翻译后输出至en-US
+
+每个文件输出内容同翻译单个文件
+
+```bash
+.
+├── en-US
+│   ├── test.js
+│   ├── test2.js
+│   └── test3.js
+├── test-en.js
+├── test.js
+└── zh-CN
+    ├── test.js
+    ├── test2.js
+    └── test3.js
+
+
+```
+
 ## 免责声明
 
 任何用户在使用 zzoffduty-cli 前，请您仔细阅读并透彻理解本声明。您可以选择不使用 zzoffduty-cli 开源界面框架，若您一旦使用 zzoffduty-cli ，您的使用行为即被视为对本声明全部内容的认可和接受。
