@@ -1,0 +1,34 @@
+{
+    "filterProjectKey": [
+        "tms-front",
+        "front"
+    ],
+    "editableConfig": [
+        "accounts",
+        "translate"
+    ],
+    "defaultProject": "tms",
+    "accounts": {
+        "tms": {
+            "account": "",
+            "password": ""
+        }
+    },
+    "projectNameCmdMap": {
+        "tms": {
+            "cmd": "cmd-tms-front.json",
+            "project": "iss-project.json"
+        }
+    },
+    "translate": {
+        "sourceDirName": "zh-CN",
+        "targetDirName": "en-US",
+        "dirBlackList": [
+            "node_modules"
+        ],
+        "account": {
+            "appId": "",
+            "key": ""
+        }
+    }
+}
