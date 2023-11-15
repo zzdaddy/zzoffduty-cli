@@ -24,11 +24,11 @@ export function writeFileContent(filePath, fileContent, onFinally = () => {}) {
   console.log("fileContent", filePath, fileContent);
   fs.writeFile(filePath, fileContent, "utf-8", (error) => {
     if (!error) {
-      spinner.succeed(`已写入${chalk.yellow(filePath)}`);
+      //   spinner.succeed(`已写入${chalk.yellow(filePath)}`);
       onFinally && onFinally(spinner, true);
     } else {
       console.log(error);
-      spinner.fail(`写入${chalk.red(filePath)}文件失败, 请重试`);
+      //   spinner.fail(`写入${chalk.red(filePath)}文件失败, 请重试`);
       onFinally && onFinally(spinner, false);
     }
   });
