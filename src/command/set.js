@@ -28,7 +28,7 @@ export const setCmd = {
           let value = payload[1];
           eval(`configItem.${key} = "${value}"`);
           // configItem[key] = value
-          let configContent = JSON.stringify(config, null, 4);
+          let configContent = JSON.stringify(config, null, 2);
           writeFileContent(
             path.resolve(__dirname, "../config.json"),
             configContent,

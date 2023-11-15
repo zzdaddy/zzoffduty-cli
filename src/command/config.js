@@ -48,7 +48,7 @@ export const configCmd = {
               );
               fs.writeFileSync(
                 filePath,
-                JSON.stringify(config, null, 4),
+                JSON.stringify(config, null, 2),
                 "utf-8"
               );
               config_spinner.succeed(`导出配置成功! [${filePath}]`);
@@ -74,7 +74,7 @@ export const configCmd = {
               let result = Object.assign({}, config, localConfig);
               fs.writeFileSync(
                 path.resolve(__dirname, "../config.json"),
-                JSON.stringify(result, null, 4),
+                JSON.stringify(result, null, 2),
                 "utf-8"
               );
               config_spinner.succeed(`导入配置成功!`);
@@ -92,7 +92,7 @@ export const configCmd = {
         );
         fs.writeFileSync(
           path.resolve(__dirname, "../config.json"),
-          JSON.stringify(defaultConfig, null, 4),
+          JSON.stringify(defaultConfig, null, 2),
           "utf-8"
         );
         config_spinner.succeed(`已重置为默认配置!`);

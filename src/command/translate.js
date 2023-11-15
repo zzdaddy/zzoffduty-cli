@@ -251,7 +251,7 @@ function readAndTranslateFileContent(filePath, cb = () => {}) {
             let words_result = limitedWords.flat(1);
             setTranslatedObj(words_result, obj);
             let file_result =
-              `export default ` + unquoteKeys(JSON.stringify(obj, null, 4));
+              `export default ` + unquoteKeys(JSON.stringify(obj, null, 2));
             resolve(file_result);
           });
         }
