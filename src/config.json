@@ -2,11 +2,15 @@
   "translate": {
     "sourceDirName": "zh-CN",
     "targetDirName": "en-US",
-    "dirBlackList": ["node_modules"],
+    "dirBlackList": [
+      "node_modules"
+    ],
     "account": {
       "appId": "",
       "key": ""
     }
   },
-  "editableConfig": ["translate"]
+  "editableConfig": [
+    "translate"
+  ]
 }
