@@ -22,8 +22,8 @@
   "scripts": {
     "init": "npm run sync",
     "sync": "node ./build/syncLocal.js",
-    "reset": "node ./build/beforeGitPush.js",
-    "release:patch": "npm version patch && npm publish",
+    "reset": "node ./build/beforeGitPush.js && git add . && git commit -m \"reset config\" && git push",
+    "release:patch": "npm run reset && npm version patch && npm publish",
     "release:minor": "node ./build/beforeGitPush.js && npm version minor && npm publish",
     "release:major": "node ./build/beforeGitPush.js && npm version major && npm publish"
   },
