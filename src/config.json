@@ -1,13 +1,12 @@
 {
-    "translate": {
-        "sourceDirName": "zh-CN",
-        "targetDirName": "en-US",
-        "dirBlackList": [
-            "node_modules"
-        ],
-        "account": {
-            "appId": "",
-            "key": ""
-        }
+  "translate": {
+    "sourceDirName": "zh-CN",
+    "targetDirName": "en-US",
+    "dirBlackList": ["node_modules"],
+    "account": {
+      "appId": "",
+      "key": ""
     }
+  },
+  "editableConfig": ["translate"]
 }
