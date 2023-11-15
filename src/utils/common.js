@@ -1,13 +1,13 @@
 import fs from "node:fs";
-import ora from "ora"
-import { dirname } from "node:path"
-import { fileURLToPath } from "node:url"
-import path from 'node:path'
+import ora from "ora";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 export async function genConfig(configPath) {
-  let _path = configPath || path.join(__dirname, "../config.json")
+  let _path = configPath || path.join(__dirname, "../config.json");
   let config = await readJsonFile(_path);
   // console.log(path.resolve(__dirname, "../config.json"));
   return config;
@@ -21,13 +21,14 @@ export async function genConfig(configPath) {
  */
 export function writeFileContent(filePath, fileContent, onFinally = () => {}) {
   let spinner = ora();
+  console.log("fileContent", filePath, fileContent);
   fs.writeFile(filePath, fileContent, "utf-8", (error) => {
     if (!error) {
-      // spinner.succeed(`已写入${chalk.yellow(filePath)}`);
+      spinner.succeed(`已写入${chalk.yellow(filePath)}`);
       onFinally && onFinally(spinner, true);
     } else {
       console.log(error);
-      // spinner.fail(`写入${chalk.red(filePath)}文件失败, 请重试`);
+      spinner.fail(`写入${chalk.red(filePath)}文件失败, 请重试`);
       onFinally && onFinally(spinner, false);
     }
   });

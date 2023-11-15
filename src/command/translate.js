@@ -3,8 +3,8 @@ import fs from "node:fs";
 import chalk from "chalk";
 import { translate } from "../translate-api/index.js";
 import { readJsonFile } from "../utils/file.js";
-import { writeFileContent, genConfig } from '../utils/common.js'
-import ora from "ora"
+import { writeFileContent, genConfig } from "../utils/common.js";
+import ora from "ora";
 // const { log } = require("../utils/common");
 
 // let config: { translate: any } = await genConfig();
@@ -37,17 +37,17 @@ const translateCmd = {
     if (!filePath && !dirPath) {
       process.exit(1);
     }
-    let file_spinner = ora()
+    let file_spinner = ora();
     let config = await genConfig();
     const translateConfig = config.translate;
     if (!translateConfig.account.appId || !translateConfig.account.key) {
-      file_spinner.fail('请先设置appId和key后再使用翻译功能')
+      file_spinner.fail("请先设置appId和key后再使用翻译功能");
       process.exit(1);
     }
     // 有文件夹路径时忽略文件
     if (dirPath) {
-      dirPath = path.resolve(process.cwd(), dirPath)
-      let stat
+      dirPath = path.resolve(process.cwd(), dirPath);
+      let stat;
       try {
         stat = fs.statSync(dirPath);
       } catch (err) {
@@ -59,26 +59,29 @@ const translateCmd = {
         file_spinner.fail(`${chalk.red(dirPath)}不是一个文件夹!`);
         return;
       } else {
-
         let filePaths = [];
-        file_spinner.succeed(`开始检索${chalk.red(dirPath)}`)
+        file_spinner.succeed(`开始检索${chalk.red(dirPath)}`);
 
         getAllFilePaths(translateConfig, dirPath, filePaths);
 
         // log.success(`共找到${chalk.red(filePaths.length)}个要翻译的文件`);
         if (filePaths.length) {
-          file_spinner.succeed(`共找到${chalk.red(filePaths.length)}个要翻译的文件`)
+          file_spinner.succeed(
+            `共找到${chalk.red(filePaths.length)}个要翻译的文件`
+          );
           file_spinner.start();
           await execWorkerSync(filePaths, 0);
-          file_spinner.stop()
+          file_spinner.stop();
         } else {
           //   log.success(`Exit`);
-          file_spinner.warn(`共找到${chalk.red(filePaths.length)}个要翻译的文件`)
+          file_spinner.warn(
+            `共找到${chalk.red(filePaths.length)}个要翻译的文件`
+          );
         }
       }
     } else {
-      file_spinner.succeed(`正在翻译${chalk.yellowBright(filePath)}`)
-      file_spinner.start()
+      file_spinner.succeed(`正在翻译${chalk.yellowBright(filePath)}`);
+      file_spinner.start();
       let file_content = await readAndTranslateFileContent(filePath);
       let fileName = path.basename(filePath);
       let dirPath = path.dirname(filePath);
@@ -89,12 +92,12 @@ const translateCmd = {
       let newFilePath = dirPath + "/" + newFileName;
       writeFileContent(newFilePath, file_content, (spinner, isOk) => {
         if (isOk) {
-          spinner.succeed('翻译结束')
-        }  else{
-          spinner.fail('翻译失败!')
+          spinner.succeed("翻译结束");
+        } else {
+          spinner.fail("翻译失败!");
         }
 
-        file_spinner.stop()
+        file_spinner.stop();
       });
     }
   },
@@ -203,11 +206,11 @@ function setTranslatedObj(words, obj) {
 function unquoteKeys(json) {
   return json.replace(/"(\\[^]|[^\\"])*"\s*:?/g, function (match) {
     if (/:$/.test(match)) {
-      return match.replace(/^"|"(?=\s*:$)/g, '');
+      return match.replace(/^"|"(?=\s*:$)/g, "");
     } else {
       return match;
     }
-  })
+  });
 }
 /**
  * 读取并翻译文本内容
@@ -247,7 +250,8 @@ function readAndTranslateFileContent(filePath, cb = () => {}) {
           startTranslate(limitedWords, () => {
             let words_result = limitedWords.flat(1);
             setTranslatedObj(words_result, obj);
-            let file_result = `export default ` + unquoteKeys(JSON.stringify(obj, null, 4));
+            let file_result =
+              `export default ` + unquoteKeys(JSON.stringify(obj, null, 4));
             resolve(file_result);
           });
         }
@@ -272,16 +276,16 @@ function getAllFilePaths(translateConfig, dirPath, filePaths) {
       if (file === translateConfig.sourceDirName) {
         // 找到目标文件夹, 获取所有文件
         let files = fs.readdirSync(filePath);
-        files.forEach( file => {
-          let jsPath = path.join(filePath, file)
-          let targetPath = path.join(dirPath, translateConfig.targetDirName)
+        files.forEach((file) => {
+          let jsPath = path.join(filePath, file);
+          let targetPath = path.join(dirPath, translateConfig.targetDirName);
           filePaths.push({
             sourcePath: jsPath,
-            targetPath
-          })
-        })
+            targetPath,
+          });
+        });
       } else if (!translateConfig.dirBlackList.includes(file)) {
-         getAllFilePaths(translateConfig, filePath, filePaths);
+        getAllFilePaths(translateConfig, filePath, filePaths);
       }
     }
   });
@@ -311,18 +315,18 @@ async function execWorkerSync(files, index = 0) {
   }
   writeFileContent(newFilePath, file_content, async (spinner, isOk) => {
     if (isOk) {
-      spinner.succeed(`${newFilePath}已翻译`)
+      spinner.succeed(`${newFilePath}已翻译`);
     } else {
-      spinner.fail(`${newFilePath}翻译失败`)
+      spinner.fail(`${newFilePath}翻译失败`);
     }
     index++;
     if (index < files.length) {
-      spinner.start()
+      spinner.start();
       await execWorkerSync(files, index);
       spinner.stop();
     } else {
-      spinner.stop()
-      spinner.succeed('翻译完毕')
+      spinner.stop();
+      spinner.succeed("翻译完毕");
     }
   });
 }
