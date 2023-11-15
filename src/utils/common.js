@@ -21,7 +21,6 @@ export async function genConfig(configPath) {
  */
 export function writeFileContent(filePath, fileContent, onFinally = () => {}) {
   let spinner = ora();
-  console.log("fileContent", filePath, fileContent);
   fs.writeFile(filePath, fileContent, "utf-8", (error) => {
     if (!error) {
       //   spinner.succeed(`已写入${chalk.yellow(filePath)}`);
