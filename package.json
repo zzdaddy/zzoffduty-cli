@@ -1,6 +1,6 @@
 {
   "name": "zzoffduty-cli",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "description": "work tool fun",
   "main": "src/index.js",
   "type": "module",
