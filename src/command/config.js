@@ -79,10 +79,10 @@ export const configCmd = {
               );
               config_spinner.succeed(`导入配置成功!`);
             } else {
-              config_spinner.fail(`不存在的文件夹路径: [${filePath}]`);
+              config_spinner.fail(`不存在的文件路径: [${filePath}]`);
             }
           } catch (error) {
-            config_spinner.fail(`不存在的文件夹路径: [${filePath}]`);
+            config_spinner.fail(`不存在的文件路径: [${filePath}]`);
           }
         }
         process.exit(1);
