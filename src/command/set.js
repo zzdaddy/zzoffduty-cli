@@ -45,10 +45,10 @@ export const setCmd = {
           process.exit(1);
         }
       } else {
-        set_spinner.error(`配置项[${chalk.red(configName)}]不允许修改`);
+        set_spinner.fail(`配置项[${chalk.red(configName)}]不允许修改`);
       }
     } else {
-      set_spinner.error(`配置项[${chalk.red(configName)}]不存在`);
+      set_spinner.fail(`配置项[${chalk.red(configName)}]不存在`);
       process.exit(1);
     }
   },
