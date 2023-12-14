@@ -4,7 +4,7 @@
   "description": "work tool fun",
   "main": "src/index.js",
   "type": "module",
-  "author": "Gank",
+  "author": "zzdaddy",
   "bin": {
     "mechine": "src/index.js",
     "zz": "src/index.js"
@@ -24,19 +24,21 @@
     "sync": "node ./build/syncLocal.js",
     "reset": "node ./build/beforeGitPush.js && git add . && git commit -m \"reset config\" && git push",
     "release:patch": "npm run reset && npm version patch && npm publish",
-    "release:minor": "node ./build/beforeGitPush.js && npm version minor && npm publish",
-    "release:major": "node ./build/beforeGitPush.js && npm version major && npm publish"
+    "release:minor": "npm run reset && npm version minor && npm publish",
+    "release:major": "npm run reset && npm version major && npm publish"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
   },
   "license": "MIT",
   "dependencies": {
+    "@img/sharp-darwin-arm64": "0.33.0",
     "axios": "1.6.2",
     "chalk": "5.3.0",
     "commander": "11.0.0",
     "inquirer": "9.2.8",
     "ora": "7.0.0",
+    "sharp": "0.33.0",
     "shelljs": "0.8.5"
   }
 }

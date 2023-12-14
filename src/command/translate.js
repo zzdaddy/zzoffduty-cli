@@ -16,7 +16,7 @@ const translateCmd = {
   options: [
     {
       flags: "-l, --language <language>",
-      description: "转换为什么语言, 支持[zh]和[en]",
+      description: "目前只支持从中文到英文",
       defaultValue: "en",
     },
     {

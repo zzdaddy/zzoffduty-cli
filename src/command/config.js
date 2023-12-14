@@ -25,7 +25,8 @@ function checkFilepath(filePath, configName, spinner) {
 }
 export const configCmd = {
   name: "config <configName> [payload...]",
-  description: "全局config.json的导入[import]/导出[export]/还原[reset]",
+  description:
+    "全局config.json的导入[import]/导出[export]/还原[reset] \n如: zz config import ./abc.json",
   options: [],
   action: async (configName, payload, cmd) => {
     let config_spinner = ora();

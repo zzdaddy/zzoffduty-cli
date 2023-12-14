@@ -1,17 +1,17 @@
 export default {
-    tessst23333: "Is this okay?!!!",
-    common: {
-        listTitle: "title",
-        addTitle: "test"
+  tessst23333: "Is this okay too?!!!",
+  common: {
+    listTitle: "title",
+    addTitle: "test"
+  },
+  test: {
+    a: {
+      b: {
+        c: "Hahaha"
+      }
     },
-    test: {
-        a: {
-            b: {
-                c: "Hahaha"
-            }
-        },
-        aaa: {
-            value: "input"
-        }
+    aaa: {
+      value: "input"
     }
+  }
 }

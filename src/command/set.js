@@ -10,7 +10,8 @@ const __dirname = dirname(__filename);
 
 export const setCmd = {
   name: "set <configName> [payload...]",
-  description: "设置全局config.json配置",
+  description:
+    "设置全局config.json配置, 只有两个命令, 复制即可 \n 1. zz set translate account.appId <value> \n 2. zz set translate account.key <value>",
   options: [],
   action: async (configName, payload, cmd) => {
     let set_spinner = ora();
