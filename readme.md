@@ -6,7 +6,11 @@
 
 默认支持macos arm64
 
-windows用户实测: node v18.18.2版本 使用 **npm i -g zzoffduty-cli@latest -f** 可用
+windows用户实测以下node版本可用, 更低版本不再尝试: 
+v16.18.2
+v18.12.1
+v18.17.0
+v18.18.2
 
 ## 功能一览
 
@@ -32,9 +36,7 @@ windows用户实测: node v18.18.2版本 使用 **npm i -g zzoffduty-cli@latest 
 
 ## 安装
 ```shell
-# macos用户
-npm i -g zzoffduty-cli@latest
-# windwos用户请使用
+# 务必添加 -f 因为sharp不同操作系统依赖了不同插件
 npm i -g zzoffduty-cli@latest -f
 ```
 ## 翻译功能配置说明
