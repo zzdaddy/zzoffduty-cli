@@ -2,7 +2,11 @@
 
 **这是一个效率类命令行工具, 为了解决工作中或个人开发过程中的重复或繁琐问题**
 
-推荐: node >= 18
+推荐: node >= 18.18.2
+
+默认支持macos arm64
+
+windows用户实测: node v18.18.2版本 使用 **npm i -g zzoffduty-cli@latest -f** 可用
 
 ## 功能一览
 
@@ -28,8 +32,10 @@
 
 ## 安装
 ```shell
-# 低版本存在不可用的情况, 请下载最新版本
-npm i -g zzoffduty-cli
+# macos用户
+npm i -g zzoffduty-cli@latest
+# windwos用户请使用
+npm i -g zzoffduty-cli@latest -f
 ```
 ## 翻译功能配置说明
 ### 初始化翻译平台appId和key
