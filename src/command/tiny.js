@@ -32,8 +32,8 @@ export const tinyCmd = {
       defaultValue: null,
     },
     {
-      flags: "-n, --name <name>",
-      description: "压缩文件夹内所有名称包含[--name]的图片文件",
+      flags: "-co, --condition <condition>",
+      description: "压缩文件夹内所有名称包含[--condition]的图片文件",
       defaultValue: null,
     },
     {
@@ -46,14 +46,19 @@ export const tinyCmd = {
       description: "GIF色彩保留(2-256)",
       defaultValue: 128,
     },
+    {
+      flags: "-n, --name <name>",
+      description: "指定文件名输出",
+      defaultValue: "",
+    },
   ],
   action: async (option) => {
     let spinner = ora();
     let config = await genConfig();
     // console.log(`OPTION`, option);
-    let { type, file, dir, name, quality, colours } = option;
+    let { type, file, dir, condition, quality, colours } = option;
 
-    if (!file && !dir && !name) {
+    if (!file && !dir && !condition) {
       spinner.fail("请指定要压缩的文件(--file=xxx)或文件夹(--dir=/a/b)");
       process.exit(1);
     }
@@ -73,14 +78,14 @@ export const tinyCmd = {
           let filetype = extname.slice(1);
           // 是否在支持的格式里
           if (true) {
+            let customFileName =
+              option.name || `${fileName}-zz-tiny-${new Date().getTime()}`;
+
             let outputPath =
               path.resolve(process.cwd(), dirPath) +
               "/" +
-              fileName +
-              "-zz-tiny-" +
-              +new Date() +
+              customFileName +
               extname;
-
             let inputPath = path.resolve(process.cwd(), file);
             if (extname.slice(1) === "gif") {
               //   console.log(`option.colours`, option.colours);
@@ -121,7 +126,7 @@ export const tinyCmd = {
     }
 
     // 指定文件夹, 翻译文件夹内所有文件
-    if (dir || name) {
+    if (dir || condition) {
       let inputDirPath = dir || "./";
       // 读取所有文件
       let files = fs.readdirSync(inputDirPath);
@@ -130,9 +135,9 @@ export const tinyCmd = {
         let filePath = path.join(inputDirPath, file);
         let stats = fs.statSync(filePath);
         if (stats.isFile()) {
-          if (name) {
+          if (condition) {
             let fileName = path.basename(file);
-            if (fileName.indexOf(name) > -1) {
+            if (fileName.indexOf(condition) > -1) {
               spinner.succeed(`${fileName}开始压缩...`);
               await tinyFile(filePath);
             }
