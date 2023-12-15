@@ -13,15 +13,16 @@
 2. 压缩文件
    1. 基于sharpjs, sharp支持的文件都可以压缩
    2. 输出目录: 所有参数下, 压缩后文件都会输出到同级目录中
-   3. 支持自定义压缩质量 --quality=70 (1-100)
-   4. 支持单个文件压缩 --file=xxx.png
-   5. 支持批量文件压缩
+   3. 支持指定名称输出 --name=xxx.png
+   4. 支持自定义压缩质量 --quality=70 (1-100)
+   5. 支持单个文件压缩 --file=xxx.png
+   6. 支持批量文件压缩
       1. 指定文件夹 --dir=./demo (基于当前命令运行的目录)
          1. 支持相对路径
          2. 支持绝对路径
-      2. 指定文件名 --name=abc
+      2. 指定文件名 --condition=abc
          1. 模糊匹配 所有包含abc且支持的文件类型都会被压缩
-         2. 如果没有指定--dir , 则--name会在当前目录下查找
+         2. 如果没有指定--dir , 则--condition会在当前目录下查找
 
 ## 安装
 ```shell
@@ -127,6 +128,15 @@ zz translate -d ./demo
 使用help命令查看所有支持的功能
 ```
 zz tiny --help
+
+ -t, --type <fileType>         转换后的图片类型 (default: null)
+  -f, --file <file>             要压缩的图片文件 (default: null)
+  -d, --dir <dir>               压缩文件夹内所有文件 (default: null)
+  -co, --condition <condition>  压缩文件夹内所有名称包含[--condition]的图片文件 (default: null)
+  -q, --quality <quality>       压缩质量(1-100) (default: 75)
+  -c, --colours <colours>       GIF色彩保留(2-256) (default: 128)
+  -n, --name <name>             指定文件名输出 (default: "")
+  -h, --help                    display help for command
 ```
 ## 开发定制
 
