@@ -71,7 +71,7 @@ export const tinyCmd = {
           // 文件类型
           let extname = path.extname(file);
           // 带后缀的文件名
-          let fileName = path.basename(file).split(".")[0];
+          let fileName = path.basename(file)?.split(".")[0];
           // 文件路径
           let dirPath = path.dirname(file);
           // 文件类型
@@ -104,7 +104,6 @@ export const tinyCmd = {
                   [filetype]({ quality: +quality })
                   .toFile(outputPath);
                 spinner.succeed(`压缩完成: ${outputPath}`);
-                process.exit(1);
               } else {
                 spinner.fail(
                   `不支持此文件类型[${filetype || fileName || file}]!`
@@ -130,11 +129,13 @@ export const tinyCmd = {
       let inputDirPath = dir || "./";
       // 读取所有文件
       let files = fs.readdirSync(inputDirPath);
+      spinner.succeed(`共有${files.length}个文件`);
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
         let filePath = path.join(inputDirPath, file);
         let stats = fs.statSync(filePath);
         if (stats.isFile()) {
+          spinner.succeed(`正在处理:${file}`);
           if (condition) {
             let fileName = path.basename(file);
             if (fileName.indexOf(condition) > -1) {
@@ -144,8 +145,12 @@ export const tinyCmd = {
           } else {
             await tinyFile(filePath);
           }
+        } else {
+          spinner.fail(`${filePath}不是文件`);
         }
       }
+
+      process.exit(1);
     }
   },
 };
