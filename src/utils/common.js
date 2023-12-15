@@ -3,6 +3,7 @@ import ora from "ora";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import chalk from "chalk";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -55,4 +56,14 @@ export const readJsonFile = async (filePath) => {
     jsonData = {};
   }
   return jsonData;
+};
+
+export const setHighLightStr = (
+  sourceText,
+  hightlightText,
+  chalkFn = chalk.red
+) => {
+  let index = sourceText.indexOf(hightlightText);
+  if (index === -1) return sourceText;
+  return sourceText.replaceAll(hightlightText, chalkFn(hightlightText));
 };
