@@ -46,6 +46,15 @@ v18.18.2
 # 0.2.0 - 0.2.3 windows下部分版本node(> 16.18 <18.18.2)有可能存在问题 懒得删了
 npm i -g zzoffduty-cli@latest -f
 ```
+
+**使用-f安装后, 再用npm去安装别的插件, 可能会报错误,  原因是zzoffduty-li里强制安装了两种平台的插件, 如果看到了报错, 可以自己手动移除全局的插件**
+
+**比如我是macos, 我的电脑不支持 @img/sharp-win32-x64,  我可以npm uninstall -g @img/sharp-win32-x64, 把它移除**
+
+**windos同理**
+
+**node20+ 在安装时可能不需要加 -f ,会自动安装sharp的依赖,  可以自行尝试一下**
+
 ## 翻译功能配置说明
 ### 初始化翻译平台appId和key
 
