@@ -4,8 +4,6 @@
 
 推荐: node >= 18.18.2
 
-默认支持macos arm64
-
 windows用户实测以下node版本可用, 更低版本不再尝试: 
 v16.18.2
 v18.12.1
@@ -36,24 +34,47 @@ v18.18.2
          2. 如果没有指定--dir , 则--condition会在当前目录下查找
          3. 模糊匹配到的内容, 会标红处理
       3. 若批量压缩时, 指定了name(第四条), 则自定义名称后会自动拼接一个序号, 避免覆盖
+   8. **支持和picgo联动, 压缩完后直接上传到图床**
+      1. 需要先安装picgo, 启动, 并配置好图床配置
+      2. 限制文件大小, 超过 max 的文件不会被上传
 
+3. 通过 Picgo 上传到图床
+   1. 支持指定文件 -f 上传
+   2. 支持指定文件夹 -d 批量上传全部
+   3. 支持限制大小 -m 默认只上传60kb以内的图片
+   4. 支持模糊匹配 -co 文件名中含有co的图片, 且满足大小限制, 都会被上传
 
-
+**特别注意:**
+1. **如果你使用Obsidian编写markdown,本工具还提供了一个压缩=>上传=>自动替换文件路径为外链的联动功能, 请仔细阅读以下!!!**
+2. 我的设置是: **设置=>文件与连接=>附件默认存放路径=> 当前文件所在文件夹下指定的子文件夹中 =>子文件夹名称: 配图**
+   1. 这样做的原因是, 方便你用tiny命令压缩**所有和这篇文章相关的图片**, 当然你自己指定压缩的目录下文件不多的话, 也可以
+   2. Obsidian里, 插入本地图片的语法为 `![[demo.png]]` , 此联动功能目前**只支持替换这个字符串**, 替换后的字符串为 `![](你上传后的图床url)`
+3. 注意参数要打全, 缺一不可
+      1.  使用--replace 参数, 开启替换功能
+      2.  使用--replace-file=./xxx.md 参数, 指定需要替换的markdown文件
+      3.  正确演示: **zz tiny -d ./demo/md/配图 --picgo --replace --replace-file=./demo/md/demo5.md**
+4. Obsidian文件替换后, 应该是不能用撤回键回退了, **所以先拿一个没用的文件, 玩明白了再开始搞自己的重要文件, 如有问题, 自己承担!**
+5. 第四条不会造成图片文件丢失,只是贴图太多的话,一般图片名称没有规则, 再还原就比较恶心了
 ## 安装
-```shell
-# 务必添加 -f 因为sharp不同操作系统依赖了不同插件
-# 安装时请使用最新版本
-# 0.2.0 - 0.2.3 windows下部分版本node(> 16.18 <18.18.2)有可能存在问题 懒得删了
-npm i -g zzoffduty-cli@latest -f
+
+**两个前置依赖包**
+
+macos M1/M2 用户请安装
+```
+ npm i -g @img/sharp-darwin-arm64@0.33.0
+```
+windows10/11 用户请安装
+```
+ npm i -g @img/sharp-win32-x64@0.33.0
 ```
 
-**使用-f安装后, 再用npm去安装别的插件, 可能会报错误,  原因是zzoffduty-li里强制安装了两种平台的插件, 如果看到了报错, 可以自己手动移除全局的插件**
+**然后安装本工具**
 
-**比如我是macos, 我的电脑不支持 @img/sharp-win32-x64,  我可以npm uninstall -g @img/sharp-win32-x64, 把它移除**
-
-**windos同理**
-
-**node20+ 在安装时可能不需要加 -f ,会自动安装sharp的依赖,  可以自行尝试一下**
+```shell
+# 安装时请使用最新版本
+# 0.2.0 - 0.2.3 windows下部分版本node(> 16.18 <18.18.2)下压缩功能有可能存在问题 懒得删了
+npm i -g zzoffduty-cli@latest
+```
 
 ## 翻译功能配置说明
 ### 初始化翻译平台appId和key
@@ -155,18 +176,37 @@ zz translate -d ./demo
 ```
 zz tiny --help
 
- -t, --type <fileType>         转换后的图片类型 (default: null)
+  -t, --type <fileType>         转换后的图片类型 (default: null)
   -f, --file <file>             要压缩的图片文件 (default: null)
   -d, --dir <dir>               压缩文件夹内所有文件 (default: null)
   -co, --condition <condition>  压缩文件夹内所有名称包含[--condition]的图片文件 (default: null)
   -q, --quality <quality>       压缩质量(1-100) (default: 75)
   -c, --colours <colours>       GIF色彩保留(2-256) (default: 128)
   -n, --name <name>             指定文件名输出 (default: "")
+  -m, --max <max>               限制要上传的文件大小(kb)(仅当开启 --picgo 时会用到) (default: 60)
+  --picgo [type]                调用picgo (无参数) (default: null)
+  --no-picgo [type]             不调用picgo (无参数) (default: null)
   -h, --help                    display help for command
 ```
+
+## 通过PicGo上传到图床
+
+**此功能通过Http请求的方式调用Picgo Server, 所以需要本地已经安装并启动Picgo, 并已经配置好了图床**
+
+使用help命令查看所有支持的功能
+
+```
+Options:
+  -f, --file <file>             要上传的图片文件 (default: null)
+  -d, --dir <dir>               上传文件夹内所有图片文件 (default: null)
+  -co, --condition <condition>  上传文件夹内所有名称包含[--condition]的图片文件 (default: null)
+  -m, --max <max>               大于指定大小(kb)的图片不会被上传 (default: 60)
+  -h, --help                    display help for command
+```
+
 ## 开发定制
 
-有具体需求, 请联系V详谈: zzdaddy7
+有定制需求, 请联系V详谈: zzdaddy7
 
 ## 免责声明
 

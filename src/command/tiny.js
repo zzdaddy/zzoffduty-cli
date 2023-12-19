@@ -4,7 +4,7 @@ import {
   setHighLightStr,
 } from "../utils/common.js";
 
-import { getFormatedFileSize } from "../utils/file.js";
+import { getFormatedFileSize, replaceFileContent } from "../utils/file.js";
 import chalk from "chalk";
 import ora from "ora";
 import path from "node:path";
@@ -12,6 +12,7 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import fs from "node:fs";
 import sharp from "sharp";
+import { picgoCmd } from "./picgo.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -45,7 +46,7 @@ export const tinyCmd = {
     {
       flags: "-q, --quality <quality>",
       description: "压缩质量(1-100)",
-      defaultValue: 75,
+      defaultValue: 65,
     },
     {
       flags: "-c, --colours <colours>",
@@ -56,6 +57,38 @@ export const tinyCmd = {
       flags: "-n, --name <name>",
       description: "指定文件名输出",
       defaultValue: "",
+    },
+    {
+      flags: "-m, --max <max>",
+      description: "限制要上传的文件大小(仅当开启 --picgo 时会用到)",
+      defaultValue: 60,
+    },
+    {
+      flags: "--picgo [type]",
+      description: "是否调用picgo",
+      defaultValue: null,
+    },
+    {
+      flags: "--no-picgo [type]",
+      description: "是否调用picgo",
+      defaultValue: null,
+    },
+    {
+      flags: "-ref, --replace-file <replaceFile>",
+      description: "要替换内容的文件",
+      defaultValue: "",
+    },
+    {
+      flags: "--no-replace [type]",
+      description:
+        "是否替换指定文件的内容, 替换规则斤仅针对Obsidian, 请看readme.md",
+      defaultValue: null,
+    },
+    {
+      flags: "--replace [type]",
+      description:
+        "是否替换指定文件的内容, 替换规则斤仅针对Obsidian, 请看readme.md",
+      defaultValue: null,
     },
   ],
   action: async (option) => {
@@ -69,6 +102,23 @@ export const tinyCmd = {
       process.exit(1);
     }
 
+    // 是否需要替换内容, true时 需要收集list<Map>
+    let isNeedUploadAndReplace = !!(
+      option.picgo &&
+      option.replace &&
+      option.replaceFile
+    );
+    let replaceMaps = [];
+
+    function collectReplaceMaps(replaceMaps, { text, newText }) {
+      if (isNeedUploadAndReplace) {
+        let map = {
+          text, // obsidian md 文件中 粘贴后的 值
+          newText, // 此时是压缩后的文件名, 在picgo里再替换成上传后的
+        };
+        replaceMaps.push(map);
+      }
+    }
     async function tinyFile(file, statisticsCount, options = {}) {
       try {
         let stats = fs.statSync(file);
@@ -122,7 +172,13 @@ export const tinyCmd = {
                 offPercent >= 0 ? chalk.green("↓") : chalk.red("↑")
               }${Math.abs(offPercent)}%)【 ${customFileName}${extname} 】`
             );
+            // 收集压缩前后的文件名映射关系
+            collectReplaceMaps(replaceMaps, {
+              text: `![[${path.basename(file)}]]`,
+              newText: `${customFileName}${extname}`,
+            });
             statisticsCount.ok++;
+            statisticsCount.okFiles.push(outputPath);
           } else {
             if (sharp(inputPath)[filetype]) {
               await sharp(path.resolve(process.cwd(), file))
@@ -140,12 +196,19 @@ export const tinyCmd = {
                   offPercent >= 0 ? chalk.green("↓") : chalk.red("↑")
                 }${Math.abs(offPercent)}%)【 ${customFileName}${extname} 】`
               );
+              // 收集压缩前后的文件名映射关系
+              collectReplaceMaps(replaceMaps, {
+                text: `![[${path.basename(file)}]]`,
+                newText: `${customFileName}${extname}`,
+              });
               statisticsCount.ok++;
+              statisticsCount.okFiles.push(outputPath);
             } else {
               spinner.fail(
                 `不支持此文件类型[${filetype || fileName || file}]!`
               );
               statisticsCount.error++;
+              statisticsCount.okFiles.push(outputPath);
             }
           }
         }
@@ -153,11 +216,19 @@ export const tinyCmd = {
         // console.log(`err`, err);
         spinner.fail("出错啦, 文件不存在或不支持此类型 \n" + err);
         statisticsCount.error++;
+        statisticsCount.errFiles.push(outputPath);
       }
     }
+
+    let statisticsCount = {
+      ok: 0,
+      okFiles: [],
+      err: 0,
+      errFiles: [],
+    };
     // 指定了文件, 压缩
     if (file) {
-      await tinyFile(file);
+      await tinyFile(file, statisticsCount);
     }
 
     // 指定文件夹, 翻译文件夹内所有文件
@@ -172,10 +243,6 @@ export const tinyCmd = {
         spinner.fail("出错啦, 文件夹似乎不存在");
         process.exit(1);
       }
-      let statisticsCount = {
-        ok: 0,
-        err: 0,
-      };
 
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
@@ -204,8 +271,25 @@ export const tinyCmd = {
           spinner.fail(`${filePath}不是文件`);
         }
       }
-      spinner.succeed(`成功${chalk.green(statisticsCount.ok)}个`);
-      process.exit(1);
+      spinner.succeed(`压缩成功 ${chalk.green(statisticsCount.ok)} 个`);
+    }
+
+    // 自动上传至picgo
+    if (option.picgo) {
+      spinner.start(`正在连接picgo`);
+      await picgoCmd.action({
+        tinyFiles: statisticsCount.okFiles,
+        max: option.max,
+        replace: isNeedUploadAndReplace,
+        replaceFile: option.replaceFile,
+        replaceMaps,
+      });
+      spinner.stop();
+
+      // 只有开启了picgo后时 才会使用替换功能 后续替换功能会独立出去 目前仅为满足自己所需
+      //   if (option.replace && option.replaceFile) {
+      //     spinner.start(`开始替换内容, 替换后请仔细检查!`);
+      //   }
     }
   },
 };

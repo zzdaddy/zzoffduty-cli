@@ -23,3 +23,39 @@ export const getFormatedFileSize = (byte) => {
   if (i === 0) return byte + " " + sizes[i];
   return (byte / Math.pow(1024, i)).toFixed(1) + " " + sizes[i];
 };
+
+// 检测文件是否存在 且 是文件类型
+export const checkFileExist = (filePath) => {
+  try {
+    return fs.existsSync(filePath) && fs.statSync(filePath).isFile();
+  } catch (err) {
+    return false;
+  }
+};
+
+// 获取文件信息, 没返回说明文件不存在, 或不是一个文件
+export const getFileInfo = (filePath) => {
+  let fileInfo = {};
+  if (checkFileExist(filePath)) {
+    fileInfo.fileName = filePath.split("/").pop();
+    fileInfo.formatFileSize = getFormatedFileSize(fs.statSync(filePath).size);
+    fileInfo.rawFileSize = fs.statSync(filePath).size;
+    fileInfo.fileType = filePath.split(".").pop();
+  }
+  return fileInfo;
+};
+
+// 替换文件内的内容
+// replaceMaps: [ {text: '1', newText: '2'}, {text: '45', newText: '112'},]
+export const replaceFileContent = async (file, replaceMaps) => {
+  try {
+    let fileContent = fs.readFileSync(file, "utf8");
+    replaceMaps.forEach((item) => {
+      if (item.text && item.newText)
+        fileContent = fileContent.replaceAll(item.text, item.newText);
+    });
+    return fileContent;
+  } catch (err) {
+    return null;
+  }
+};
