@@ -25,7 +25,7 @@ const supportFileTypes = ["png", "jpg", "jpeg", "gif", "webp"];
 
 export const picgoCmd = {
   name: "picgo",
-  description: "上传图片",
+  description: "上传图片(此命令暂时废弃, 原因见readme)",
   options: [
     {
       flags: "-f, --file <file>",

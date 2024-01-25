@@ -104,9 +104,8 @@ export const tinyCmd = {
 
     // 是否需要替换内容, true时 需要收集list<Map>
     let isNeedUploadAndReplace = !!(
-      option.picgo &&
-      option.replace &&
-      option.replaceFile
+      //   option.picgo &&
+      (option.replace && option.replaceFile)
     );
     let replaceMaps = [];
 
@@ -140,8 +139,7 @@ export const tinyCmd = {
           if (options.count && options.count > 1 && option.name) {
             customFileName = `${option.name}${options.order + 1}`;
           } else {
-            customFileName =
-              option.name || `${fileName}-zz-tiny-${new Date().getTime()}`;
+            customFileName = option.name || `${fileName}-tiny`;
           }
 
           let outputPath =
@@ -174,7 +172,7 @@ export const tinyCmd = {
             );
             // 收集压缩前后的文件名映射关系
             collectReplaceMaps(replaceMaps, {
-              text: `![[${path.basename(file)}]]`,
+              text: `${path.basename(file)}`,
               newText: `${customFileName}${extname}`,
             });
             statisticsCount.ok++;
@@ -198,7 +196,7 @@ export const tinyCmd = {
               );
               // 收集压缩前后的文件名映射关系
               collectReplaceMaps(replaceMaps, {
-                text: `![[${path.basename(file)}]]`,
+                text: `${path.basename(file)}`,
                 newText: `${customFileName}${extname}`,
               });
               statisticsCount.ok++;
@@ -274,6 +272,41 @@ export const tinyCmd = {
       spinner.succeed(`压缩成功 ${chalk.green(statisticsCount.ok)} 个`);
     }
 
+    // 自动替换wiki链接
+    // 因为obsidian里已经有了一个插件, 可以自动上传到picgo并替换链接, 功能重复度很高
+    // 后续考虑给作者提个pr, 加入压缩功能
+    // console.log(`fileMaps`, replaceMaps);
+    if (option.replace) {
+      // 上传成功改的图片文件
+      let tinyFiles = statisticsCount.okFiles;
+      if (tinyFiles && tinyFiles.length) {
+        // await batchUploadByPicGo(tinyFiles, option);
+        if (!option.replace) process.exit(1);
+        spinner.start("开始替换文件内容, 替换后请仔细检查!");
+        console.log(`replaceMaps`, replaceMaps);
+        const fileContent = await replaceFileContent(
+          option.replaceFile,
+          replaceMaps
+        );
+        console.log(`fileContent`, fileContent);
+        if (!fileContent) {
+          spinner.fail("替换文件内容失败! 请检查要替换的文件是否存在!");
+          process.exit(1);
+        }
+        try {
+          fs.writeFileSync(option.replaceFile, fileContent, "utf-8");
+          spinner.succeed(
+            `[${chalk.red(
+              path.basename(option.replaceFile)
+            )}]图片链接替换完成!请前往检查!`
+          );
+        } catch (err) {
+          spinner.fail("图片链接替换失败!");
+        }
+      }
+      // 处理完后不再上传picgo
+      process.exit(1);
+    }
     // 自动上传至picgo
     if (option.picgo) {
       spinner.start(`正在连接picgo`);
